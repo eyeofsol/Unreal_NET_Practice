@@ -2,6 +2,7 @@
 
 
 #include "TestGameState.h"
+#include "Net/UnrealNetwork.h"
 
 ATestGameState::ATestGameState()
 {
