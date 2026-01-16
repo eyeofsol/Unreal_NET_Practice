@@ -3,6 +3,7 @@
 
 #include "MainHUDWidget.h"
 #include "TestGameState.h"
+#include "TestPlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
 
@@ -50,8 +51,20 @@ void UMainHUDWidget::UpdateGameOverDisplay()
 {
 	if (CachedGameState.IsValid() && CachedGameState->IsGameOver())
 	{
-		//ATestGameState* MyState = Cast<ATestGameState>(CachedGameState->PlayerArray[0]);
-		//ATestGameState* OtherState = Cast<ATestGameState>(CachedGameState->PlayerArray[1]);
+		ATestPlayerState* MyState = Cast<ATestPlayerState>(CachedGameState->PlayerArray[0]);
+		//ATestPlayerState* OtherState = Cast<ATestPlayerState>(CachedGameState->PlayerArray[1]);
+		if (MyState->GetMyScore() > MyState->GetOtherScore())
+		{
+			GameOverText->SetText(FText::FromString(FString::Printf(TEXT("승리!"))));
+		}
+		else if (MyState->GetMyScore() == MyState->GetOtherScore())
+		{
+			GameOverText->SetText(FText::FromString(FString::Printf(TEXT("무승부"))));
+		}
+		else
+		{
+			GameOverText->SetText(FText::FromString(FString::Printf(TEXT("패배"))));
+		}
 		GameOverText->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 	else
