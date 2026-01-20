@@ -20,6 +20,8 @@ void UMainHUDWidget::UpdateOtherScore(int32 InScore)
 void UMainHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	MyScoreText->SetText(FText::AsNumber(0));
+	OtherScoreText->SetText(FText::AsNumber(0));
 	GameOverText->SetVisibility(ESlateVisibility::Hidden);
 }
 
@@ -51,21 +53,24 @@ void UMainHUDWidget::UpdateGameOverDisplay()
 {
 	if (CachedGameState.IsValid() && CachedGameState->IsGameOver())
 	{
-		ATestPlayerState* MyState = Cast<ATestPlayerState>(CachedGameState->PlayerArray[0]);
-		//ATestPlayerState* OtherState = Cast<ATestPlayerState>(CachedGameState->PlayerArray[1]);
-		if (MyState->GetMyScore() > MyState->GetOtherScore())
+		APlayerController* PC = GetOwningPlayer();
+		ATestPlayerState* MyState = PC->GetPlayerState<ATestPlayerState>();
+		if (MyState)
 		{
-			GameOverText->SetText(FText::FromString(FString::Printf(TEXT("승리!"))));
+			if (MyState->GetMyScore() > MyState->GetOtherScore())
+			{
+				GameOverText->SetText(FText::FromString(FString::Printf(TEXT("승리!"))));
+			}
+			else if (MyState->GetMyScore() == MyState->GetOtherScore())
+			{
+				GameOverText->SetText(FText::FromString(FString::Printf(TEXT("무승부"))));
+			}
+			else
+			{
+				GameOverText->SetText(FText::FromString(FString::Printf(TEXT("패배"))));
+			}
+			GameOverText->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
-		else if (MyState->GetMyScore() == MyState->GetOtherScore())
-		{
-			GameOverText->SetText(FText::FromString(FString::Printf(TEXT("무승부"))));
-		}
-		else
-		{
-			GameOverText->SetText(FText::FromString(FString::Printf(TEXT("패배"))));
-		}
-		GameOverText->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 	else
 	{
